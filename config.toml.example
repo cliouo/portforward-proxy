@@ -1,0 +1,13 @@
+[[forward]]
+local = "8080"
+remote = "example.com"
+rport = "80"
+proxy = ""
+status = true
+
+[[forward]]
+local = "8443"
+remote = "secure.example.com"
+rport = "443"
+proxy = "http://proxy.example.com:8080"
+status = false

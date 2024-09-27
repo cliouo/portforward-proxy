@@ -1,0 +1,19 @@
+[Unit]
+Description=端口转发服务
+After=network.target
+
+[Service]
+ExecStart=/path/to/your/portforward -local 8080 -remote example.com -rport 80 -proxy http://proxy.example.com:8080
+Restart=always
+User=nobody
+Group=nogroup
+
+# 如果程序意外退出,等待 5 秒后重启
+RestartSec=5
+
+# 将标准输出和错误输出重定向到系统日志
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
