@@ -130,6 +130,7 @@ func handleConnection(localConn net.Conn, remoteAddr, proxyURL string, logger *l
 
 	logger.Printf("新连接建立: 客户端 %s -> 本地 %s -> 目标 %s (代理: %s, 调试: %t)\n", clientAddr, listenAddr, remoteAddr, proxyDesc, debug)
 
+	defer localConn.Close()
 	var remoteConn net.Conn
 	var err error
 	if proxyURL != "" {
@@ -246,7 +247,7 @@ func dialThroughProxy(remoteAddr, proxyURL string, logger *log.Logger, debug boo
 	if debug && logger != nil {
 		logger.Printf("CONNECT 响应:\n%s", response)
 	}
-	if !strings.Contains(response, "200 Connection established") {
+	if !strings.HasPrefix(response, "HTTP/1.") || !strings.Contains(response, " 200 ") {
 		conn.Close()
 		return nil, fmt.Errorf("代理连接失败: %s", response)
 	}
@@ -393,6 +394,7 @@ func sanitizeFilename(name string) string {
 
 	clean := replacer.Replace(name)
 	clean = strings.ReplaceAll(clean, "..", "_")
+	clean = filepath.Base(clean)
 	return clean
 }
 
